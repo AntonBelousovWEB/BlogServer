@@ -16,12 +16,14 @@ export class PostService {
     return this.repository.save(createPostDto);
   }
 
-  findAll() {
-    return `This action returns all post`;
+  findAll(): Promise<PostEntity[]> {
+    return this.repository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  findOne(id: number): Promise<PostEntity[]> {
+    return this.repository.find({
+      where: { id: id },
+    });
   }
 
   update(id: number, updatePostDto: UpdatePostDto) {
