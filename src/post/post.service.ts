@@ -30,7 +30,8 @@ export class PostService {
     return `This action updates a #${id} post`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: number): Promise<PostEntity[]> {
+    const post = await this.repository.find({ where: { id:id }});
+    return this.repository.remove(post);
   }
 }
