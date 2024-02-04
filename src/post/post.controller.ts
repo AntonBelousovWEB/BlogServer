@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -9,16 +9,15 @@ import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @ApiBody({type: CreatePostDto})
   @Post()
   create(@Body() createPostDto: CreatePostDto) {
     return this.postService.create(createPostDto);
   }
 
-  @ApiBody({type: CreatePostDto})
-
   @Get()
-  findAll() {
-    return this.postService.findAll();
+  findAll(@Query('page') page: number, @Query('perPage') perPage: number) {
+    return this.postService.findAll(page, perPage);
   }
 
   @Get(':id')

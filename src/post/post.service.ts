@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,8 +16,13 @@ export class PostService {
     return this.repository.save(createPostDto);
   }
 
-  findAll(): Promise<PostEntity[]> {
-    return this.repository.find();
+  async findAll(@Query('page') page: number = 1, @Query('perPage') perPage: number = 5): Promise<PostEntity[]> {
+    const skip = (page - 1) * perPage;
+    return this.repository.find({
+      order: { CreatedAt: 'DESC' },
+      take: perPage,
+      skip: skip,
+    });
   }
 
   findOne(id: number): Promise<PostEntity[]> {
