@@ -1,4 +1,4 @@
-import { Injectable, Query } from '@nestjs/common';
+import { Injectable, Query, Logger } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,6 +23,15 @@ export class PostService {
       take: perPage,
       skip: skip,
     });
+  }
+
+  async findMaxId(): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder('post')
+      .select('MAX(post.id)', 'maxId')
+      .getRawOne();
+
+    return result?.maxId || 0;
   }
 
   findOne(id: number): Promise<PostEntity[]> {

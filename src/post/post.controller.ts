@@ -20,6 +20,12 @@ export class PostController {
     return this.postService.findAll(page, perPage);
   }
 
+  @Get('maxId')
+  async getMaxId(): Promise<{ maxId: number }> {
+    const maxId = await this.postService.findMaxId();
+    return { maxId };
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postService.findOne(+id);
