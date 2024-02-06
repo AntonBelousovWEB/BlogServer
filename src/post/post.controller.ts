@@ -26,6 +26,11 @@ export class PostController {
     return { maxId };
   }
 
+  @Get('searh')
+  async searchPosts(@Query('searchTerm') searchTerm: string) {
+    return this.postService.searchByTitleOrContent(searchTerm);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postService.findOne(+id);

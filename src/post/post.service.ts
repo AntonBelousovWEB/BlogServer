@@ -34,6 +34,14 @@ export class PostService {
     return result?.maxId || 0;
   }
 
+  async searchByTitleOrContent(searchTerm: string): Promise<PostEntity[]> {
+    const posts = await this.repository.createQueryBuilder('post')
+      .where('post.title LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+      .orWhere('post.content LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+      .getMany();
+    return posts;
+  }
+
   findOne(id: number): Promise<PostEntity[]> {
     return this.repository.find({
       where: { id: id },
