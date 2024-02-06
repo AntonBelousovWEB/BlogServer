@@ -35,12 +35,18 @@ export class PostService {
   }
 
   async searchByTitleOrContent(searchTerm: string): Promise<PostEntity[]> {
+    const searchTerms = searchTerm.split(' '); // Разбиваем строку на отдельные слова
     const posts = await this.repository.createQueryBuilder('post')
-      .where('post.title LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-      .orWhere('post.content LIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+      .where('(' + searchTerms.map(term => 'post.title LIKE :term').join(' OR ') + ')', {
+        term: `%${searchTerms[0]}%`
+      })
+      .orWhere('(' + searchTerms.map(term => 'post.content LIKE :term').join(' OR ') + ')', {
+        term: `%${searchTerms[0]}%`
+      })
       .getMany();
     return posts;
   }
+  
 
   findOne(id: number): Promise<PostEntity[]> {
     return this.repository.find({
