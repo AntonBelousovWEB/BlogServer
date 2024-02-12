@@ -66,6 +66,9 @@ export class PostService {
 
   async remove(id: number): Promise<PostEntity[]> {
     const post = await this.repository.find({ where: { id:id }});
+    if (post.length <= 0) {
+      throw new BadRequestException('Post not found.');
+    }
     return this.repository.remove(post);
   }
 }
