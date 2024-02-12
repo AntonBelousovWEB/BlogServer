@@ -1,4 +1,4 @@
-import { Injectable, Query, Logger } from '@nestjs/common';
+import { Injectable, Query, Logger, BadRequestException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +13,9 @@ export class PostService {
   ) {}
 
   create(createPostDto: CreatePostDto) {
+    if (createPostDto.title.length < 10 || createPostDto.content.length < 50) {
+      throw new BadRequestException('Too few characters');
+    }
     return this.repository.save(createPostDto);
   }
 
