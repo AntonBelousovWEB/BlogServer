@@ -58,7 +58,7 @@ export class PostService {
     const existingPost = await this.repository.find({
       where: { id: id },
     });
-    if (existingPost.length >= 0) {
+    if (existingPost.length <= 0) {
       throw new BadRequestException('Post not found.');
     }
     return this.repository.update(id, updatePostDto);
