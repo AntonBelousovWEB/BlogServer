@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { PostModule } from './post/post.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './post/entities/post.entity';
+import { PhotosModule } from './photos/photos.module';
+import { PhotoEntity } from './photos/entities/photo.entity';
 
 @Module({
   imports: [
@@ -14,10 +16,11 @@ import { PostEntity } from './post/entities/post.entity';
       username: 'psuffzwt',
       password: 'VLOQxqYtclKGDw4eeM1yAq_JvD0jYB9k',
       database: 'psuffzwt',
-      entities: [PostEntity],
+      entities: [PostEntity, PhotoEntity],
       synchronize: true,
     }),
-    PostModule
+    PostModule,
+    PhotosModule
   ],
   controllers: [AppController],
   providers: [AppService],

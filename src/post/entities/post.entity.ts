@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { PhotoEntity } from "src/photos/entities/photo.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("post")
 export class PostEntity {
@@ -13,4 +14,8 @@ export class PostEntity {
 
     @CreateDateColumn()
     CreatedAt: Date; 
+
+    @OneToOne(() => PhotoEntity, (photo) => photo.post)
+    @JoinColumn()
+    photo: PhotoEntity;
 }
