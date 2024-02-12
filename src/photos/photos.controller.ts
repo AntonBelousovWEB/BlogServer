@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { PhotosService } from './photos.service';
 import { CreatePhotoDto } from './dto/create-photo.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -22,7 +22,7 @@ export class PhotosController {
       storage: fileStorage,
     }),
   )
-  @ApiConsumes('multipart/from-data')
+  @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: 'object',
@@ -34,7 +34,7 @@ export class PhotosController {
       }
     }
   })
-  create(@Body() createPhotoDto: CreatePhotoDto) {
-    return this.repository.create(createPhotoDto);
+  create(@UploadedFile() file: Express.Multer.File) {
+    return file;
   }
 }
