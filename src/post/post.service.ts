@@ -1,4 +1,4 @@
-import { Injectable, Query, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, Query, BadRequestException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,9 +13,6 @@ export class PostService {
   ) {}
 
   create(createPostDto: CreatePostDto) {
-    if (createPostDto.title.length < 10 || createPostDto.content.length < 50) {
-      throw new BadRequestException('Too few characters');
-    }
     return this.repository.save(createPostDto);
   }
 
@@ -57,7 +54,13 @@ export class PostService {
     });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
+  async update(id: number, updatePostDto: UpdatePostDto) {
+    const existingPost = await this.repository.find({
+      where: { id: id },
+    });
+    if (existingPost.length >= 0) {
+      throw new BadRequestException('Post not found.');
+    }
     return this.repository.update(id, updatePostDto);
   }
 
