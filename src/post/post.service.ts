@@ -4,26 +4,39 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './entities/post.entity';
 import { Repository } from 'typeorm';
+import { PhotoEntity } from 'src/photos/entities/photo.entity';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(PostEntity)
     private repository: Repository<PostEntity>,
+    @InjectRepository(PhotoEntity)
+    private readonly photoRepository: Repository<PhotoEntity>,
   ) {}
 
   create(createPostDto: CreatePostDto) {
     return this.repository.save(createPostDto);
   }
 
-  async findAll(@Query('page') page: number = 1, @Query('perPage') perPage: number = 5): Promise<PostEntity[]> {
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('perPage') perPage: number = 5,
+  ): Promise<PostEntity[]> {
     const skip = (page - 1) * perPage;
-    return this.repository.find({
-      relations: { photo: true },
+    const posts = await this.repository.find({
       order: { CreatedAt: 'DESC' },
       take: perPage,
       skip: skip,
     });
+
+    for (const post of posts) {
+      post.photo = await this.photoRepository.findOne({
+        where: { id: post.photoId },
+      });
+    }
+
+    return posts;
   }
 
   async findMaxId(): Promise<number> {
