@@ -15,7 +15,7 @@ export class PostEntity {
     @CreateDateColumn()
     CreatedAt: Date; 
 
-    @Column()
+    @Column({ nullable: true })
     photoId: number;
 
     @OneToOne(() => PhotoEntity, (photo) => photo.post)

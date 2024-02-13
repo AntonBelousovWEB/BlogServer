@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, MinLength } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsOptional, IsString, MinLength } from "class-validator";
 
 export class CreatePostDto {
     @ApiProperty()
@@ -12,6 +12,8 @@ export class CreatePostDto {
     @MinLength(50)
     content: string;
 
-    @ApiProperty()
-    photoId: number;
+    @ApiProperty({ required: false, default: null })
+    @ApiPropertyOptional()
+    @IsOptional() 
+    photoId?: number;
 }

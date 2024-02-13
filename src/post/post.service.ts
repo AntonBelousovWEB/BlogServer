@@ -31,9 +31,12 @@ export class PostService {
     });
 
     for (const post of posts) {
-      post.photo = await this.photoRepository.findOne({
-        where: { id: post.photoId },
-      });
+      if (post.photoId !== null) {
+        const photo = await this.photoRepository.findOne({ where: { id: post.photoId } });
+        if (photo) {
+          post.photo = photo;
+        }
+      }
     }
 
     return posts;
