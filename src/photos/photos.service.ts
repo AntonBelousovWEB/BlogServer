@@ -15,7 +15,10 @@ export class PhotosService {
     return this.repository.find();
   }
 
-  create(createPhotoDto: CreatePhotoDto) {
-    return 'This action adds a new photo';
+  create(file: Express.Multer.File, postId: number) {
+    return this.repository.save({
+      filename: file.filename,
+      post: {id: postId},
+    });
   }
 }
