@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePhotoDto } from './dto/create-photo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PhotoEntity } from './entities/photo.entity';
 import { Repository } from 'typeorm';
@@ -15,10 +14,9 @@ export class PhotosService {
     return this.repository.find();
   }
 
-  create(file: Express.Multer.File, postId: number) {
-    return this.repository.save({
-      filename: file.filename,
-      post: {id: postId},
-    });
+  async create(file: Express.Multer.File) {
+    const photo = new PhotoEntity();
+    photo.filename = file.filename;
+    return await this.repository.save(photo);
   }
 }

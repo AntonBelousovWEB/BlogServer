@@ -1,9 +1,8 @@
-import { Controller, Post, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, Get } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, Get, Body } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileStorage } from './storage';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { PhotosService } from './photos.service';
-import { PostId } from 'decorators/post-id.decorator';
 
 @Controller('photos')
 @ApiTags('photos')
@@ -14,7 +13,7 @@ export class PhotosController {
   findAll() {
     return this.photosService.findAll();
   }
-  
+
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -39,8 +38,7 @@ export class PhotosController {
     })
   ) 
     file: Express.Multer.File,
-    @PostId() postId: number,
   ) {
-    return this.photosService.create(file, postId);
+    return this.photosService.create(file);
   }
 }

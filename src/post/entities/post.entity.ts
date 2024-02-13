@@ -15,7 +15,10 @@ export class PostEntity {
     @CreateDateColumn()
     CreatedAt: Date; 
 
+    @Column()
+    photoId: number;
+
     @OneToOne(() => PhotoEntity, (photo) => photo.post)
-    @JoinColumn()
+    @JoinColumn({ name: 'photo_id' })
     photo: PhotoEntity;
 }

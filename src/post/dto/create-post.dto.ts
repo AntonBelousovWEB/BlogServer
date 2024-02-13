@@ -11,4 +11,7 @@ export class CreatePostDto {
     @IsString()
     @MinLength(50)
     content: string;
+
+    @ApiProperty()
+    photoId: number;
 }

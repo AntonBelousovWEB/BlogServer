@@ -19,6 +19,7 @@ export class PostService {
   async findAll(@Query('page') page: number = 1, @Query('perPage') perPage: number = 5): Promise<PostEntity[]> {
     const skip = (page - 1) * perPage;
     return this.repository.find({
+      relations: { photo: true },
       order: { CreatedAt: 'DESC' },
       take: perPage,
       skip: skip,
