@@ -1,21 +1,19 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { PhotosService } from './photos.service';
-import { CreatePhotoDto } from './dto/create-photo.dto';
+import { Controller, Post, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, Get } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileStorage } from './storage';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PhotoEntity } from './entities/photo.entity';
-import { Repository } from 'typeorm';
+import { PhotosService } from './photos.service';
 
 @Controller('photos')
 @ApiTags('photos')
 export class PhotosController {
-  constructor(
-    @InjectRepository(PhotoEntity)
-    private repository: Repository<PhotoEntity>
-  ) {}
+  constructor(private readonly photosService: PhotosService) {}
 
+  @Get()
+  findAll() {
+    return this.photosService.findAll();
+  }
+  
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -34,7 +32,11 @@ export class PhotosController {
       }
     }
   })
-  create(@UploadedFile() file: Express.Multer.File) {
+  create(@UploadedFile(
+    new ParseFilePipe({
+      validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 10 })]
+    })
+  ) file: Express.Multer.File) {
     return file;
   }
 }
