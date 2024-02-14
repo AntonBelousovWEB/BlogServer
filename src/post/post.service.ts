@@ -65,10 +65,17 @@ export class PostService {
   }
   
 
-  findOne(id: number): Promise<PostEntity[]> {
-    return this.repository.find({
+  async findOne(id: number): Promise<PostEntity[]> {
+    const post = await this.repository.find({
       where: { id: id },
     });
+    if (post[0].photoId !== null) {
+      const photo = await this.photoRepository.findOne({ where: { id: post[0].photoId } });
+      if (photo) {
+        post[0].photo = photo;
+      }
+    }
+    return post;
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {
