@@ -22,9 +22,10 @@ export class PostService {
   ) {}
 
   async attachRelatedObjects<T extends PostEntity>(
-    posts: T[],
+    postOrPosts: T | T[],
     relatedEntities: RelatedEntity[],
   ): Promise<T[]> {
+    const posts = Array.isArray(postOrPosts) ? postOrPosts : [postOrPosts];
     for (const post of posts) {
       for (const relatedEntity of relatedEntities) {
         if (post[relatedEntity.id] !== null) {
@@ -69,9 +70,7 @@ export class PostService {
       },
     ];    
 
-    const attach = await this.attachRelatedObjects(posts, relatedEntities);
-
-    return attach;
+    return await this.attachRelatedObjects(posts, relatedEntities);
   }
 
   async findMaxId(): Promise<number> {
@@ -101,13 +100,21 @@ export class PostService {
     const post = await this.repository.find({
       where: { id: id },
     });
-    if (post[0].photoId !== null) {
-      const photo = await this.photoRepository.findOne({ where: { id: post[0].photoId } });
-      if (photo) {
-        post[0].photo = photo;
-      }
-    }
-    return post;
+
+    const relatedEntities: RelatedEntity[] = [
+      {
+        id: 'photoId',
+        propertyName: 'photo',
+        repository: this.photoRepository,
+      },
+      {
+        id: 'fileId',
+        propertyName: 'file',
+        repository: this.photoRepository,
+      },
+    ];    
+
+    return await this.attachRelatedObjects(post, relatedEntities);
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {
