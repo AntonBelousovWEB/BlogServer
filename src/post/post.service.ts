@@ -61,12 +61,17 @@ export class PostService {
         id: 'photoId',
         propertyName: 'photo',
         repository: this.photoRepository,
-      }
+      },
+      {
+        id: 'fileId',
+        propertyName: 'file',
+        repository: this.photoRepository,
+      },
     ];    
 
-    const hello = await this.attachRelatedObjects(posts, relatedEntities);
+    const attach = await this.attachRelatedObjects(posts, relatedEntities);
 
-    return hello;
+    return attach;
   }
 
   async findMaxId(): Promise<number> {
