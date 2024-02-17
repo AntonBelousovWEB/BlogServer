@@ -6,6 +6,12 @@ import { PostEntity } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { PhotoEntity } from 'src/photos/entities/photo.entity';
 
+interface RelatedEntity {
+  propertyName: string;
+  id: string;
+  repository: Repository<any>;
+}
+
 @Injectable()
 export class PostService {
   constructor(
@@ -14,6 +20,26 @@ export class PostService {
     @InjectRepository(PhotoEntity)
     private readonly photoRepository: Repository<PhotoEntity>,
   ) {}
+
+  async attachRelatedObjects<T extends PostEntity>(
+    posts: T[],
+    relatedEntities: RelatedEntity[],
+  ): Promise<T[]> {
+    for (const post of posts) {
+      for (const relatedEntity of relatedEntities) {
+        if (post[relatedEntity.id] !== null) {
+          const relatedObject = await relatedEntity.repository.findOne({
+            where: { id: post[relatedEntity.id] },
+          });
+          if (relatedObject) {
+            post[relatedEntity.propertyName] = relatedObject;
+          }
+        }
+      }
+    }
+  
+    return posts;
+  }  
 
   create(createPostDto: CreatePostDto) {
     return this.repository.save(createPostDto);
@@ -30,16 +56,17 @@ export class PostService {
       skip: skip,
     });
 
-    for (const post of posts) {
-      if (post.photoId !== null) {
-        const photo = await this.photoRepository.findOne({ where: { id: post.photoId } });
-        if (photo) {
-          post.photo = photo;
-        }
+    const relatedEntities: RelatedEntity[] = [
+      {
+        id: 'photoId',
+        propertyName: 'photo',
+        repository: this.photoRepository,
       }
-    }
+    ];    
 
-    return posts;
+    const hello = await this.attachRelatedObjects(posts, relatedEntities);
+
+    return hello;
   }
 
   async findMaxId(): Promise<number> {

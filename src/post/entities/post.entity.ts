@@ -18,7 +18,14 @@ export class PostEntity {
     @Column({ nullable: true })
     photoId: number;
 
+    @Column({ nullable: true })
+    fileId: number;
+
     @OneToOne(() => PhotoEntity, (photo) => photo.post)
     @JoinColumn({ name: 'photo_id' })
     photo: PhotoEntity;
+
+    @OneToOne(() => PhotoEntity, (photo) => photo.file)
+    @JoinColumn({ name: 'file_id' })
+    file: PhotoEntity;
 }

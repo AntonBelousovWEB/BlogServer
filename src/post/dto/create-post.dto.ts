@@ -16,4 +16,9 @@ export class CreatePostDto {
     @ApiPropertyOptional()
     @IsOptional() 
     photoId?: number;
+
+    @ApiProperty({ required: false, default: null })
+    @ApiPropertyOptional()
+    @IsOptional() 
+    fileId?: number;
 }

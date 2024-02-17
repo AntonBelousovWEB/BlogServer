@@ -11,4 +11,7 @@ export class PhotoEntity {
 
     @OneToOne(() => PostEntity, (post) => post.photo)
     post: PostEntity;
+
+    @OneToOne(() => PostEntity, (file) => file.file)
+    file: PostEntity;
 }
