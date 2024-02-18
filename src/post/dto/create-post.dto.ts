@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsOptional, IsString, MinLength } from "class-validator";
+import { IsOptional, IsString, MinLength, IsArray, ArrayMinSize, ArrayNotEmpty } from "class-validator";
 
 export class CreatePostDto {
     @ApiProperty()
@@ -21,4 +21,11 @@ export class CreatePostDto {
     @ApiPropertyOptional()
     @IsOptional() 
     fileId?: number;
+
+    @ApiProperty({ required: false, type: [String], default: ["hello", "hi", "post"] })
+    @IsArray()
+    @ArrayMinSize(1)
+    @ArrayNotEmpty()
+    @IsString({ each: true }) 
+    tagsList?: string[];
 }

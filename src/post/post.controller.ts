@@ -31,6 +31,11 @@ export class PostController {
     return this.postService.searchByTitleOrContent(searchTerm);
   }
 
+  @Get('searchTags')
+  async searchByTags(@Query('tagArray') tagArray: string | string[]) {
+      return this.postService.searchByTag(tagArray);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postService.findOne(+id);

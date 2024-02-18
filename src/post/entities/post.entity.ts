@@ -21,6 +21,9 @@ export class PostEntity {
     @Column({ nullable: true })
     fileId: number;
 
+    @Column({ type: 'text', array: true, nullable: true })
+    tagsList: string[]; 
+
     @OneToOne(() => PhotoEntity, (photo) => photo.post)
     @JoinColumn({ name: 'photo_id' })
     photo: PhotoEntity;

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { PhotoEntity } from 'src/photos/entities/photo.entity';
+import { isArray } from 'util';
 
 interface RelatedEntity {
   propertyName: string;
@@ -83,7 +84,7 @@ export class PostService {
   }
 
   async searchByTitleOrContent(searchTerm: string): Promise<PostEntity[]> {
-    const searchTerms = searchTerm.split(' '); // Разбиваем строку на отдельные слова
+    const searchTerms = searchTerm.split(' '); 
     const posts = await this.repository.createQueryBuilder('post')
       .where('(' + searchTerms.map(term => 'post.title LIKE :term').join(' OR ') + ')', {
         term: `%${searchTerms[0]}%`
@@ -95,6 +96,15 @@ export class PostService {
     return posts;
   }
   
+  async searchByTag(tagArray: string | string[]): Promise<PostEntity[]> {
+    const tags = isArray(tagArray) ? tagArray : [tagArray];
+    const query = this.repository.createQueryBuilder('post');
+    query.where(
+      'EXISTS (SELECT 1 FROM unnest(post.tagsList) AS tag WHERE tag ILIKE ANY(:tags))', 
+      { tags: tags.map(tag => `%${tag}%`) }
+    );
+    return query.getMany();
+  }  
 
   async findOne(id: number): Promise<PostEntity[]> {
     const post = await this.repository.find({
