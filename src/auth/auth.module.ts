@@ -5,18 +5,15 @@ import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './Strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './Strategies/jwt.strategy';
 
 @Module({
   imports: [
     JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
+      useFactory: async () => {
         return {
-          secret: configService.get('SECRET_KEY'),
-          signOptions: { expiresIn: configService.get('EXPIRES_IN') },
+          secret: 'test123',
+          signOptions: { expiresIn: '2h' },
         };
       },
     }),
