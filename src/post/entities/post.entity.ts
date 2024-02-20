@@ -1,5 +1,6 @@
+import { CommentEntity } from "src/comments/entities/comment.entity";
 import { PhotoEntity } from "src/photos/entities/photo.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("post")
 export class PostEntity {
@@ -31,4 +32,7 @@ export class PostEntity {
     @OneToOne(() => PhotoEntity, (photo) => photo.file)
     @JoinColumn({ name: 'file_id' })
     file: PhotoEntity;
+
+    @OneToMany(() => CommentEntity, (comment) => comment.post)
+    comment: CommentEntity[];
 }

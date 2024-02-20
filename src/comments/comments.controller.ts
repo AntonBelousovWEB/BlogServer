@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -15,13 +15,16 @@ export class CommentsController {
 
   @ApiBody({type: CreateCommentDto})
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto, @UserId() userId: number) {
-    return this.commentsService.create(createCommentDto, userId);
+  create(
+    @Body() createCommentDto: CreateCommentDto, 
+    @UserId() userId: number,
+    @Query('postId') postId: number) {
+    return this.commentsService.create(createCommentDto, userId, postId);
   }
 
-  @Get()
-  findAll() {
-    return this.commentsService.findAll();
+  @Get('commentByPost')
+  findByPost(@Query('postId') postId: number) {
+    return this.commentsService.findByPost(postId);
   }
 
   // @Get(':id')

@@ -1,37 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentEntity } from './entities/comment.entity';
 import { Repository } from 'typeorm';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CommentsService {
   constructor (
     @InjectRepository(CommentEntity)
-    private repository: Repository<CommentEntity>
+    private repository: Repository<CommentEntity>,
   ) {}
 
-  create(comment: CreateCommentDto, userId: number) {
+  create(
+    comment: CreateCommentDto, 
+    userId: number, 
+    @Query('postId') postId: number) {
     return this.repository.save({
       content: comment.content,
-      user: { id: userId},
+      user: { id: userId },
+      post: { id: postId },
     });
   }
 
-  findAll() {
-    return `This action returns all comments`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
-  }
-
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
-  }
+  async findByPost(@Query('postId') postId: number) {
+    const comments = await this.repository.createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .select(['comment.id', 'comment.content', 'user.name'])
+      .where('comment.postId = :postId', { postId })
+      .getMany();
+  
+    return comments;
+  }   
 }
